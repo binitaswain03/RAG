@@ -8,6 +8,8 @@ class VerificationResult(BaseModel):
     score: float = Field(description="A score between 0.0 and 1.0 indicating factual grounding.")
     reasoning: str = Field(description="Explanation of the score and any hallucinations found.")
 
+from utils.llm_utils import retry_with_backoff
+
 class Verifier:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0)
@@ -27,6 +29,7 @@ Context:
             partial_variables={"format_instructions": self.parser.get_format_instructions()}
         )
 
+    @retry_with_backoff(retries=3, backoff_in_seconds=2)
     def verify_answer(self, query, answer, context_chunks):
         """Verifies the generated answer against the context."""
         context_text = "\n\n".join([doc.page_content for doc in context_chunks])

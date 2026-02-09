@@ -2,6 +2,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import config
 
+from utils.llm_utils import retry_with_backoff
+
 class AnswerGenerator:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0)
@@ -18,6 +20,7 @@ Answer:""",
             input_variables=["question", "context"]
         )
 
+    @retry_with_backoff(retries=3, backoff_in_seconds=2)
     def generate_answer(self, query, context_chunks):
         """Generates an answer based on context."""
         context_text = "\n\n".join([doc.page_content for doc in context_chunks])

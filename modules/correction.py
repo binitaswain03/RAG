@@ -2,6 +2,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import config
 
+from utils.llm_utils import retry_with_backoff
+
 class CorrectionModule:
     def __init__(self):
         self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0.7)
@@ -14,6 +16,7 @@ Return ONLY the reformulated query.
             input_variables=["original_query", "reasoning"]
         )
 
+    @retry_with_backoff(retries=3, backoff_in_seconds=2)
     def reformulate_query(self, original_query, reasoning):
         """Reformulates a query based on previous failure reasoning."""
         chain = self.prompt | self.llm
