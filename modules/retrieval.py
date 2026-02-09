@@ -3,6 +3,8 @@ from langchain_openai import OpenAIEmbeddings
 import config
 import os
 
+from utils.llm_utils import retry_with_backoff
+
 class Retriever:
     def __init__(self):
         self.embeddings = OpenAIEmbeddings(openai_api_key=config.OPENAI_API_KEY)
@@ -19,6 +21,7 @@ class Retriever:
                 allow_dangerous_deserialization=True
             )
 
+    @retry_with_backoff(retries=3, backoff_in_seconds=2)
     def get_relevant_chunks(self, query):
         """Retrieves relevant chunks for a query."""
         if not self.vector_store:

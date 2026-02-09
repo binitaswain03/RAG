@@ -3,7 +3,7 @@ import logging
 from functools import wraps
 import openai
 
-def retry_with_backoff(retries=3, backoff_in_seconds=1):
+def retry_with_backoff(retries=5, backoff_in_seconds=4):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):

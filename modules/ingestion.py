@@ -5,6 +5,8 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 import config
 
+from utils.llm_utils import retry_with_backoff
+
 class DocumentIngestor:
     def __init__(self):
         self.embeddings = OpenAIEmbeddings(openai_api_key=config.OPENAI_API_KEY)
@@ -25,6 +27,7 @@ class DocumentIngestor:
         texts = text_splitter.split_documents(documents)
         return texts
 
+    @retry_with_backoff(retries=3, backoff_in_seconds=2)
     def create_vector_store(self, texts):
         """Creates and saves a FAISS vector store from text chunks."""
         vector_store = FAISS.from_documents(texts, self.embeddings)

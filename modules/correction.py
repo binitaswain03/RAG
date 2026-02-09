@@ -55,7 +55,11 @@ class PipelineOrchestrator:
                 self.logger.warning(msg)
                 logs.append(msg)
                 if attempts < config.MAX_RETRIES:
-                    current_query = self.corrector.reformulate_query(current_query, "No context found")
+                    try:
+                        current_query = self.corrector.reformulate_query(current_query, "No context found")
+                    except Exception as e:
+                        self.logger.error(f"Failed to reformulate query: {e}")
+                        return {"answer": "I am currently experiencing high traffic (Rate Limit). Please try again in a few moments.", "confidence": 0.0, "logs": logs, "chunks": []}
                     continue
                 return {"answer": "I could not find any relevant information to answer your question.", "confidence": 0.0, "logs": logs, "chunks": []}
 
