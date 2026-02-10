@@ -21,7 +21,7 @@ class Retriever:
                 allow_dangerous_deserialization=True
             )
 
-    @retry_with_backoff(retries=3, backoff_in_seconds=2)
+    @retry_with_backoff(retries=config.API_MAX_RETRIES, backoff_in_seconds=config.API_BACKOFF_SECONDS)
     def get_relevant_chunks(self, query):
         """Retrieves relevant chunks for a query."""
         if not self.vector_store:

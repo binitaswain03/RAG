@@ -16,6 +16,8 @@ TOP_K = 3
 # Verification Settings
 CONFIDENCE_THRESHOLD = 0.75
 MAX_RETRIES = 2
+API_MAX_RETRIES = 5
+API_BACKOFF_SECONDS = 5
 
 # Paths
 VECTOR_STORE_PATH = "faiss_index"

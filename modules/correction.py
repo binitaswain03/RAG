@@ -16,7 +16,7 @@ Return ONLY the reformulated query.
             input_variables=["original_query", "reasoning"]
         )
 
-    @retry_with_backoff(retries=3, backoff_in_seconds=2)
+    @retry_with_backoff(retries=config.API_MAX_RETRIES, backoff_in_seconds=config.API_BACKOFF_SECONDS)
     def reformulate_query(self, original_query, reasoning):
         """Reformulates a query based on previous failure reasoning."""
         chain = self.prompt | self.llm
@@ -59,7 +59,7 @@ class PipelineOrchestrator:
                         current_query = self.corrector.reformulate_query(current_query, "No context found")
                     except Exception as e:
                         self.logger.error(f"Failed to reformulate query: {e}")
-                        return {"answer": "I am currently experiencing high traffic (Rate Limit). Please try again in a few moments.", "confidence": 0.0, "logs": logs, "chunks": []}
+                        return {"answer": "I encountered an issue while processing your request. Please try again.", "confidence": 0.0, "logs": logs, "chunks": []}
                     continue
                 return {"answer": "I could not find any relevant information to answer your question.", "confidence": 0.0, "logs": logs, "chunks": []}
 
