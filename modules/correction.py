@@ -58,8 +58,10 @@ class PipelineOrchestrator:
                     try:
                         current_query = self.corrector.reformulate_query(current_query, "No context found")
                     except Exception as e:
-                        self.logger.error(f"Failed to reformulate query: {e}")
-                        return {"answer": "I encountered an issue while processing your request. Please try again.", "confidence": 0.0, "logs": logs, "chunks": []}
+                        error_msg = f"Failed to reformulate query: {str(e)}"
+                        self.logger.error(error_msg)
+                        logs.append(error_msg)
+                        return {"answer": f"I encountered an issue: {str(e)}. Please try again.", "confidence": 0.0, "logs": logs, "chunks": []}
                     continue
                 return {"answer": "I could not find any relevant information to answer your question.", "confidence": 0.0, "logs": logs, "chunks": []}
 
