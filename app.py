@@ -1,6 +1,12 @@
 import streamlit as st
 import os
 import shutil
+import importlib
+import modules.correction
+import modules.retrieval
+importlib.reload(modules.correction)
+importlib.reload(modules.retrieval)
+
 from modules.ingestion import DocumentIngestor
 from modules.correction import PipelineOrchestrator
 import config
@@ -9,11 +15,11 @@ st.set_page_config(page_title="Self-Correcting RAG", layout="wide")
 
 st.title("Self-Correcting RAG Pipeline")
 
-# Initialize modules
+# Initialize modules (ensure they are reloaded)
 if 'ingestor' not in st.session_state:
     st.session_state.ingestor = DocumentIngestor()
-if 'orchestrator' not in st.session_state:
-    st.session_state.orchestrator = PipelineOrchestrator()
+if 'rag_pipeline_v2' not in st.session_state:
+    st.session_state.rag_pipeline_v2 = PipelineOrchestrator()
 
 with st.sidebar:
     st.header("Document Upload")
@@ -35,7 +41,7 @@ with st.sidebar:
                     st.success(f"Ingested {len(docs)} pages into {len(chunks)} chunks.")
                     
                     # Force reload of retriever
-                    st.session_state.orchestrator.retriever.reload_vector_store()
+                    st.session_state.rag_pipeline_v2.retriever.reload_vector_store()
                     
                 except Exception as e:
                     st.error(f"Error: {e}")
@@ -49,7 +55,7 @@ query = st.text_input("Enter your query:")
 if query:
     if st.button("Generate Answer"):
         with st.spinner("Running Pipeline..."):
-            result = st.session_state.orchestrator.run_pipeline(query)
+            result = st.session_state.rag_pipeline_v2.run_pipeline(query)
             
             if result:
                 col1, col2 = st.columns([2, 1])
