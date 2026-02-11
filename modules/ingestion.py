@@ -1,15 +1,13 @@
-import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 import config
-
 from utils.llm_utils import retry_with_backoff
+from utils.llm_factory import get_embeddings
 
 class DocumentIngestor:
     def __init__(self):
-        self.embeddings = OpenAIEmbeddings(openai_api_key=config.OPENAI_API_KEY)
+        self.embeddings = get_embeddings()
         self.vector_store_path = config.VECTOR_STORE_PATH
 
     def load_pdf(self, file_path):

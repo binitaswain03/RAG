@@ -1,13 +1,12 @@
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
 import config
 import os
-
 from utils.llm_utils import retry_with_backoff
+from utils.llm_factory import get_embeddings
 
 class Retriever:
     def __init__(self):
-        self.embeddings = OpenAIEmbeddings(openai_api_key=config.OPENAI_API_KEY)
+        self.embeddings = get_embeddings()
         self.vector_store_path = config.VECTOR_STORE_PATH
         self.vector_store = None
         self.reload_vector_store()

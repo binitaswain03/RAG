@@ -1,11 +1,11 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import config
 from utils.llm_utils import retry_with_backoff
+from utils.llm_factory import get_llm
 
 class CorrectionModule:
     def __init__(self):
-        self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0.7)
+        self.llm = get_llm(temperature=0.7)
         self.prompt = PromptTemplate(
             template="""The user asked: "{original_query}"
 The retrieval system provided context, but the generated answer was verified as low confidence or hallucinated (Reason: {reasoning}).

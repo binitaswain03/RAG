@@ -1,18 +1,17 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 import config
+from utils.llm_utils import retry_with_backoff
+from utils.llm_factory import get_llm
 
 class VerificationResult(BaseModel):
     score: float = Field(description="A score between 0.0 and 1.0 indicating factual grounding.")
     reasoning: str = Field(description="Explanation of the score and any hallucinations found.")
 
-from utils.llm_utils import retry_with_backoff
-
 class Verifier:
     def __init__(self):
-        self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0)
+        self.llm = get_llm(temperature=0)
         self.parser = PydanticOutputParser(pydantic_object=VerificationResult)
         self.prompt = PromptTemplate(
             template="""You are a strict fact-checker. Verify if the generated answer is fully supported by the provided context.

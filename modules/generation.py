@@ -1,12 +1,11 @@
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 import config
-
 from utils.llm_utils import retry_with_backoff
+from utils.llm_factory import get_llm
 
 class AnswerGenerator:
     def __init__(self):
-        self.llm = ChatOpenAI(model="gpt-4o-mini", openai_api_key=config.OPENAI_API_KEY, temperature=0)
+        self.llm = get_llm(temperature=0)
         self.prompt = PromptTemplate(
             template="""You are a helpful assistant. Use the following pieces of retrieved context to answer the question.
 If the answer is not in the context, just say that you don't know. Keep the answer concise.

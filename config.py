@@ -6,6 +6,14 @@ load_dotenv()
 # OpenAI API Key
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+# Google API Key
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# Provider Settings
+# Options: "openai", "google"
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "openai")
+
 # Processing Settings
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
